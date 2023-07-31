@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Overlock', cursive;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+        }
+
+        nav {
+            height: 60px;
+            background-color: rgb(37, 9, 37);
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .container {
+            /* border: 2px solid red; */
+            width: 100%;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            /* margin-top: 50px; */
+
+        }
+
+        .game-bord {
+            display: grid;
+            grid-template-columns: repeat(3, 12vw);
+            grid-template-rows: repeat(3, 10vw);
+            position: relative;
+        }
+
+        .cell {
+            border: 2px solid black;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5.5rem;
+
+        }
+
+        .show-turn {
+            font-size: 2.5rem;
+        }
+
+        #restart-btn {
+            padding: 5px 25px;
+            font-size: 1.75rem;
+            background-color: rgb(246, 200, 231);
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+        }
+
+        #restart-btn:hover {
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+        }
+
+        .bt-0 {
+            border-top: 0;
+        }
+
+        .br-0 {
+            border-right: 0;
+        }
+
+        .bb-0 {
+            border-bottom: 0;
+        }
+
+        .bl-0 {
+            border-left: 0;
+        }
+
+        .winner {
+            font-size: 3rem;
+            font-weight: 600;
+
+        }
+
+        .line {
+            height: 3px;
+            width: 0vw;
+
+            position: absolute;
+            background-color: black;
+            transition: width 1s linear;
+
+
+        }
+
+        .lineCol {
+            height: 0vw;
+            width: 3px;
+            /* transform: translate(30vw, 2vw); */
+            position: absolute;
+            background-color: black;
+            transition: height 1s linear;
+        }
+
+        .lineDia {
+            height: 3px;
+            width: 0vw;
+            transform: translate(4vw, 3vw) rotate(40deg);
+            transform-origin: left;
+            position: absolute;
+            background-color: black;
+            transition: width 1s linear;
+        }
+
+        @media (max-width:600px) {
+            .game-bord {
+                display: grid;
+                grid-template-columns: repeat(3, 22vw);
+                grid-template-rows: repeat(3, 18vw);
+            }
+
+            .cell {
+                font-size: 4rem;
+            }
+
+            .winner {
+                font-size: 2rem;
+            }
+        }
+
+        .cell:hover {
+            background-color: rgb(242, 222, 242);
+            border-radius: 50%;
+
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>Tic-Tac-Toe.com</nav>
+    <div class="container">
+        <div class="game-bord">
+            <div class="line"></div>
+            <div class="lineCol"></div>
+            <div class="lineDia"></div>
+            <div class="cell bt-0 bl-0"></div>
+            <div class="cell bt-0"></div>
+            <div class="cell bt-0 br-0"></div>
+            <div class="cell bl-0"></div>
+            <div class="cell"></div>
+            <div class="cell br-0"></div>
+            <div class="cell bl-0 bb-0"></div>
+            <div class="cell bb-0"></div>
+            <div class="cell bb-0 br-0"></div>
+
+        </div>
+
+        <div class="show-turn">
+            Turn For : <span id="showTurn">X</span>
+        </div>
+
+        <div class="winner">
+
+        </div>
+        <button id="restart-btn">Restart</button>
+    </div>
+
+    <!-- <script src="./main.js"></script> -->
+
+    <script>
+        let input = document.querySelectorAll('.cell')
+        let winner = document.querySelector('.winner')
+        let win = new Audio("win.mp3")
+        let tie = new Audio("tie.mp3")
+        let ting = new Audio("ting.mp3")
+        let player1 = 'X'
+        let player2 = 'O'
+        let playerTurn = player1;
+        let emptyCell = 9;
+        const restartBtn = document.getElementById("restart-btn");
+
+
+        // Game function+++++++
+        const playGame = () => {
+            input.forEach((cell) => {
+
+
+                cell.addEventListener('click', clickHandelar)
+
+            })
+        }
+
+        //click handelar+++++++
+
+        function clickHandelar(e) {
+            if (e.target.innerHTML == '') {        // jodi cell ta faka thake tobei input hobe
+                e.target.innerHTML = playerTurn;
+                emptyCell--;
+                ting.play()
+
+                if (checkWin()) {
+                    // console.log(`${playerTurn} win`)
+                    win.play();
+                    winner.innerHTML = `${playerTurn} is Winner!!!`
+                    disable();
+                }
+                else if (checkTie()) {
+                    // console.log("Tie")
+                    tie.play()
+                    winner.innerHTML = `Game is Draw!!!`
+                }
+                switchPlayer();
+                document.getElementById("showTurn").innerHTML = playerTurn;
+            }
+        }
+
+
+        playGame();
+
+        // Winning Function++++++++
+        let checkWin = () => {
+            const winCondition = [
+                [0, 1, 2, 1, 5, 0],
+                [3, 4, 5, 1, 15, 0],
+                [6, 7, 8, 1, 25, 0],
+                [0, 3, 6, 6, 2, 0],   //6 2 0
+                [1, 4, 7, 18, 2, 0], // 18 2 0
+                [2, 5, 8, 30, 2, 0], //30 2 0
+                [0, 4, 8, 4, 3, 40], //4 3 40
+                [2, 4, 6, 1, 15, 140]
+            ];
+
+            for (let i = 0; i < winCondition.length; i++) {
+                let [pos1, pos2, pos3, pos4, pos5, pos6] = winCondition[i] //array destructuring
+
+                if (input[pos1].textContent !== "" && input[pos1].textContent == input[pos2].textContent && input[pos2].textContent == input[pos3].textContent) {
+
+                    if ((pos1 == 0 && pos2 == 3 && pos3 == 6) || (pos1 == 1 && pos2 == 4 && pos3 == 7) || (pos1 == 2 && pos2 == 5 && pos3 == 8)) {
+                        document.querySelector(".lineCol").style.height = "27vw"
+                        document.querySelector(".lineCol").style.transform = `translate(${pos4}vw,${pos5}vw) rotate(${pos6}deg`;
+                    }
+
+                    else if ((pos1 == 0 && pos2 == 4 && pos3 == 8)) {
+                        document.querySelector(".lineDia").style.width = "35vw"
+                        document.querySelector(".lineDia").style.transform = `translate(${pos4}vw,${pos5}vw) rotate(${pos6}deg`
+                    }
+
+                    else {
+                        document.querySelector(".line").style.width = "34vw"
+                        document.querySelector(".line").style.transform = `translate(${pos4}vw,${pos5}vw) rotate(${pos6}deg`;
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Tie Function+++++++++++++
+        let checkTie = () => {
+            if (emptyCell == 0 && !checkWin()) {
+                return true;
+            }
+
+            else {
+                return false;
+            }
+        }
+
+
+        //REMOVE   EL+++++++++++++++
+
+        const disable = () => {
+            input.forEach((cell) => {
+                cell.removeEventListener('click', clickHandelar)
+            });
+        }
+
+        //restart+++++
+        restartBtn.addEventListener('click', () => {
+            location.reload();
+        })
+
+
+        // switch player function
+        function switchPlayer() {
+            if (playerTurn === player1) {
+                playerTurn = player2;
+            }
+            else {
+                playerTurn = player1;
+            }
+        }
+
+    </script>
+
+
+
+</body>
+
+</html>
